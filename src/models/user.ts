@@ -1,4 +1,17 @@
-import { model, Schema } from "mongoose"
+import { model, Schema, Document } from "mongoose"
+
+export interface User extends Document {
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+    picturePath: string,
+    friends: string[],
+    location: string,
+    occupation: string,
+    viewedProfile: number,
+    impressions: number
+}
 
 const userSchema = new Schema({
     firstName: {
@@ -30,8 +43,8 @@ const userSchema = new Schema({
         default: "",
     },
     friends: {
-        type: Array,
-        default: []
+        type: Array<string>,
+        default: [] as String[]
     },
     location: String,
     occupation: String,
@@ -40,6 +53,6 @@ const userSchema = new Schema({
     
 }, { timestamps: true });
 
-const User = model("User", userSchema);
+const UserModel = model<User>("User", userSchema);
 
-export default User;
+export default UserModel;

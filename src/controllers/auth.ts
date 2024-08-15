@@ -51,7 +51,7 @@ export const login = async (req: Request, res: Response) => {
 
         const token = jwt.sign({ id: user._id}, process.env.JWT_SECRET!);
 
-        const copiedUser = user.toJSON();
+        const copiedUser = user.toObject();
 
         delete copiedUser.password;
 

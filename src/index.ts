@@ -7,13 +7,15 @@ import multer from "multer";
 import helmet from "helmet";
 import morgan from "morgan";
 import path from "path"
-import { fileURLToPath } from "url"
 import { register } from "./controllers/auth"
 import authRouter from "./routes/auth"
 import userRouter from "./routes/user"
+import postRouter from "./routes/post"
 import { verifyToken } from "./middleware/auth";
-// "exec": "node --loader ts-node/esm src/index.ts"
+import { createPost } from "./controllers/post";
+
 /* CONFIGURATIONS */
+
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = path.dirname(__filename);
 
@@ -44,13 +46,16 @@ const upload = multer({ storage });
 
 /* ROUTES WITH FILES */
 app.post("/auth/register", upload.single("picture"), register);
+app.post("/posts", verifyToken, upload.single("picture"), createPost);
 
 app.use("/auth", verifyToken, authRouter);
-
+app.use("/user", userRouter);
+app.use("/posts", postRouter);
 
 /* MONGOOSE SETUP */
 const PORT = process.env.port || 5000;
 mongoose.connect(process.env.MONGO_URL!)
     .then(() => {
         app.listen(PORT, () => console.log(`Server is succesfully running at port ${PORT}`));
-    }).catch((error) => console.error(`${error} did not connect`));
+    })
+    .catch((error) => console.error(`${error} did not connect`));
