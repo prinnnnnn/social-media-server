@@ -57,7 +57,7 @@ export const login = async (req: Request, res: Response) => {
 
         const copiedUser = user.toObject();
 
-       copiedUser.password = "";
+        copiedUser.password = "";
 
         return res.status(200).send({ token, user: copiedUser });
         

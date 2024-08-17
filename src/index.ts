@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import bodyParser from 'body-parser';
 import mongoose from "mongoose";
 import cors from "cors";
@@ -35,6 +35,7 @@ app.use(morgan("common"));
 app.use(bodyParser.json({ limit: "30mb" }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
+// console.log(`Asset Path: ${path.join(__dirname, '/public/assets')}`);
 app.use("/assets", express.static(path.join(__dirname, '/public/assets')));
 
 /* FILE STORAGE */
@@ -48,6 +49,11 @@ const storage = multer.diskStorage({
 })
 
 const upload = multer({ storage });
+
+/* */
+app.get("/", (req: Request, res: Response) => {
+    res.send("Server is running")
+})
 
 /* ROUTES WITH FILES */
 app.post("/auth/register", upload.single("picture"), register);

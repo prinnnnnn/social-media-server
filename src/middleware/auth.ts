@@ -13,11 +13,14 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
         if (!token)
             return res.status(403).send("Access Denied")
 
+        // console.log(token);
+        // console.log(process.env.JWT_SECRET);
+
         if (token.startsWith("Bearer ")) {
             token = token.slice(7, token.length).trimStart();
         }
 
-        const verified = jwt.verify(token, process.env.JWT_TOKEN!);
+        const verified = jwt.verify(token, process.env.JWT_SECRET!);
         req.body.user = verified;
         next();
         
