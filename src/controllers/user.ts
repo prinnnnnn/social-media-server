@@ -1,36 +1,39 @@
 import { Request, Response } from 'express';
-import User from "../models/user";
+import UserModel, { User } from "../models/user";
 
+/* GET - /user/:id */
 export const getUser = async (req: Request, res: Response) => {
 
     try {
         
         const { id } = req.params;
-
-        const user = await User.findById(id);
+        console.log(`Retrieving information of user ID: ${id}`);
+        const user = await UserModel.findById(id);
 
         return res.status(200).send(user?.toJSON());
 
     } catch (error) {
+        console.log(typeof error);
         return res.status(404).send({ message: error });
     }
 
 }
 
+/* GET - /user/friends/:id */
 export const getUserFriends = async (req: Request, res: Response) => {
 
     try {
         
         const { id } = req.params;
-
-        const user = await User.findById(id);
+        console.log(`Retrieving friends of user ID: ${id}`);
+        const user = await UserModel.findById(id);
         
         if (!user)
             return res.sendStatus(404);
 
         const friends = await Promise.all(
-            user.friends.map((id) => User.findById(id))
-        );
+            user.friends.map((id) => UserModel.findById(id))
+        ) as User[];
 
         const formattedFriends = friends.map(
             ({ _id, firstName, lastName, occupation, location, picturePath }) => {
@@ -46,13 +49,15 @@ export const getUserFriends = async (req: Request, res: Response) => {
 
 }
 
+/* PATCH - /user/:id/:friendId */
 export const addRemoveFriend = async (req: Request, res: Response) => {
 
     try {
 
-        const {id, friendId } = req.params;
-        const user = await User.findById(id);
-        const friend = await User.findById(friendId);
+        const { id, friendId } = req.params;
+        console.log(`Add/Remove a friend ID: ${friendId} of user ID: ${id}`);
+        const user = await UserModel.findById(id);
+        const friend = await UserModel.findById(friendId);
 
         if (!user || !friend)
             return res.sendStatus(404);
@@ -69,8 +74,8 @@ export const addRemoveFriend = async (req: Request, res: Response) => {
         await friend.save();
 
         const friends = await Promise.all(
-            user.friends.map((id) => User.findById(id))
-        );
+            user.friends.map((id) => UserModel.findById(id))
+        ) as User[];
 
         const formattedFriends = friends.map(
             ({ _id, firstName, lastName, occupation, location, picturePath }) => {

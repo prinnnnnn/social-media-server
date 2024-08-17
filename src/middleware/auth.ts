@@ -18,7 +18,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
         }
 
         const verified = jwt.verify(token, process.env.JWT_TOKEN!);
-
+        req.body.user = verified;
         next();
         
     } catch (error) {

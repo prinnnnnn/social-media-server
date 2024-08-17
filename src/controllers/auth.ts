@@ -7,11 +7,12 @@ import { config } from "dotenv";
 config();
 
 /* REGISTER USER */
+/* POST - /auth/register */
 export const register = async (req: Request, res: Response) => {
 
     try {
         const { password } = req.body;
-
+        console.log(`Creating a new user`);
         const salt = await bcrypt.genSalt();
         const passwordHash = await bcrypt.hash(password, salt);
 
@@ -24,6 +25,8 @@ export const register = async (req: Request, res: Response) => {
 
         const savedUser = await newUser.save();
 
+        savedUser.password = "";
+
         return res.status(201).send(savedUser.toJSON());
 
     } catch (error) {
@@ -33,18 +36,19 @@ export const register = async (req: Request, res: Response) => {
 }
 
 /* LOGGING IN */
+/* POST - /auth/login */
 export const login = async (req: Request, res: Response) => {
 
     try {
 
         const { email, password } = req.body;
-
+        console.log(`Logging username: ${email} in`);
         const user = await User.findOne({ email: email })
 
         if (!user) 
             return res.status(404).send({ msg: "User does not exist. "});
         
-        const isMatch = await bcrypt.compare(user.password, password);
+        const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) 
             return res.status(400).send({ msg: "Invalid Credential"});
@@ -53,11 +57,13 @@ export const login = async (req: Request, res: Response) => {
 
         const copiedUser = user.toObject();
 
-        delete copiedUser.password;
+       copiedUser.password = "";
 
-        return res.status(200).send({ token, copiedUser });
+        return res.status(200).send({ token, user: copiedUser });
         
     } catch (error) {
+        console.log(`An error occur!!!`);
+        console.log(typeof error);
         return res.status(400).send(error)
     }
 
