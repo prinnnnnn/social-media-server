@@ -1,6 +1,6 @@
 import { Schema, Document, model } from "mongoose";
 
-interface Post extends Document {
+export interface Post extends Document {
     userId: string,
     firstName: string,
     lastName: string,
@@ -9,7 +9,7 @@ interface Post extends Document {
     picturePath: string,
     userPicturePath: string,
     likes: Map<string, boolean>,
-    comments: string[]
+    comments: Array<string>
 }
 
 const postSchema = new Schema({
@@ -34,9 +34,9 @@ const postSchema = new Schema({
         of: Boolean,
     },
     comments: {
-        types: Array,
-        default: []
-    }  
+        type: Array<string>,
+        default: [],
+    }
 }, { timestamps: true })
 
 const PostModel = model<Post>("Post", postSchema);

@@ -13,15 +13,8 @@ import userRouter from "./routes/user"
 import postRouter from "./routes/post"
 import { verifyToken } from "./middleware/auth";
 import { createPost } from "./controllers/post";
-import User from "./models/user";
-import Post from "./models/post";
-import { users, posts } from "./data/toyData";
 
 /* CONFIGURATIONS */
-
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-
 console.log(`Directory: ${__dirname}\nFilename: ${__filename}`);
 
 dotenv.config();
@@ -41,7 +34,7 @@ app.use("/assets", express.static(path.join(__dirname, '/public/assets')));
 /* FILE STORAGE */
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "public/assets");
+        cb(null, "src/public/assets");
     },
     filename: (req, file, cb) => {
         cb(null, file.originalname);
@@ -68,17 +61,9 @@ const PORT = process.env.port || 5000;
 
 const dbUrl = process.env.MONGO_URL;
 
-// console.log(`DB url: ${dbUrl}`);
-
-// if (!dbUrl && typeof dbUrl !== "undefined")
-    mongoose.connect(dbUrl!)
-        .then(() => {
-            console.log(`Connected to ${dbUrl}`);
-            app.listen(PORT, () => console.log(`Server is succesfully running at port ${PORT}`));
-            
-            /* ADD DATA ONE TIME */
-            // User.insertMany(users);
-            // Post.insertMany(posts);
-
-        })
-        .catch((error) => console.error(`${error} did not connect`));
+mongoose.connect(dbUrl!)
+    .then(() => {
+        console.log(`Connected to ${dbUrl}`);
+        app.listen(PORT, () => console.log(`Server is succesfully running at port ${PORT}`));
+    })
+    .catch((error) => console.error(`${error} did not connect`));
